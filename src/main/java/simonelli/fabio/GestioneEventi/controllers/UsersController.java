@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import simonelli.fabio.GestioneEventi.entities.Event;
 import simonelli.fabio.GestioneEventi.entities.User;
 import simonelli.fabio.GestioneEventi.payloads.NewEventResponseDTO;
 import simonelli.fabio.GestioneEventi.payloads.NewUserResponseDTO;
@@ -46,8 +47,15 @@ public class UsersController {
     }
 
     @PutMapping("/role/{userId}")
-    public NewUserResponseDTO changeUserRole(@PathVariable UUID userId, @RequestParam(name = "role", required = true) String role){
+    public NewUserResponseDTO changeUserRole(@PathVariable UUID userId,
+                                             @RequestParam(name = "role", required = true) String role){
         User changedUser = usersService.changeUserRole(userId, role);
         return new NewUserResponseDTO(changedUser.getId());
     }
+
+//    @PostMapping("/me/bookEvent/{eventId}")
+//    public NewEventResponseDTO bookEvent(@AuthenticationPrincipal User user, @PathVariable UUID eventId){
+//        Event found = usersService.bookEvent(user, eventId);
+//        return new NewEventResponseDTO(found.getId());
+//    }
 }

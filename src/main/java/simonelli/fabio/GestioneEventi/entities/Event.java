@@ -30,6 +30,8 @@ public class Event {
     private int maxPeople;
     private int numParticipants;
 
+    private String avatarUrl;
+
     @ManyToOne
     private User manager;
 }

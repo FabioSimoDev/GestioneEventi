@@ -1,11 +1,14 @@
 package simonelli.fabio.GestioneEventi.services;
 
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import simonelli.fabio.GestioneEventi.entities.Event;
 import simonelli.fabio.GestioneEventi.entities.User;
 import simonelli.fabio.GestioneEventi.exceptions.BusyLocationException;
@@ -14,6 +17,7 @@ import simonelli.fabio.GestioneEventi.payloads.NewEventDTO;
 import simonelli.fabio.GestioneEventi.payloads.NewEventResponseDTO;
 import simonelli.fabio.GestioneEventi.repositories.EventsDAO;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -22,6 +26,9 @@ import java.util.UUID;
 public class EventsService {
     @Autowired
     private EventsDAO eventsDAO;
+
+    @Autowired
+    private Cloudinary cloudinaryUploader;
 
     public Page<Event> getEvents(int page, int size, String orderBy){
         if(size >= 50) size=50;
@@ -72,5 +79,19 @@ public class EventsService {
         found.setMaxPeople(body.maxPeople());
 
         return eventsDAO.save(found);
+    }
+
+    public Event uploadPicture(MultipartFile file, UUID eventId) throws IOException {
+
+        Event event = this.getById(eventId);
+
+        String url = (String) cloudinaryUploader.uploader()
+                .upload(file.getBytes(), ObjectUtils.emptyMap())
+                .get("url");
+
+        //metto l'url nell'utente e lo aggiorno nel DB
+        event.setAvatarUrl(url);
+        eventsDAO.save(event);
+        return event;
     }
 }

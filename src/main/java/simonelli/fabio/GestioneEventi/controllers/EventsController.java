@@ -8,6 +8,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import simonelli.fabio.GestioneEventi.entities.Event;
 import simonelli.fabio.GestioneEventi.entities.User;
 import simonelli.fabio.GestioneEventi.exceptions.BadRequestException;
@@ -18,6 +19,7 @@ import simonelli.fabio.GestioneEventi.payloads.NewUserResponseDTO;
 import simonelli.fabio.GestioneEventi.repositories.EventsDAO;
 import simonelli.fabio.GestioneEventi.services.EventsService;
 
+import java.io.IOException;
 import java.util.UUID;
 
 @RestController
@@ -68,9 +70,15 @@ public class EventsController {
         System.out.println(validation);
         if (validation.hasErrors()) {
             System.out.println(validation.getAllErrors());
-            throw new BadRequestException("Ci sono errori nel payload!"); 
+            throw new BadRequestException("Ci sono errori nel payload!");
         } else {
             return eventsService.getByIdAndChange(eventId, body);
         }
+    }
+
+    @PostMapping("/{eventId}/upload")
+    @PreAuthorize("hasAuthority('ORGANIZZATORE')")
+    public Event uploadAvatar(@RequestParam("avatar") MultipartFile file, @PathVariable UUID eventId) throws IOException {
+        return eventsService.uploadPicture(file, eventId);
     }
 }
