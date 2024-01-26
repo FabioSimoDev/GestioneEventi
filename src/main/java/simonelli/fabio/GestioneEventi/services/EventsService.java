@@ -44,6 +44,7 @@ public class EventsService {
         newEvent.setName(body.name());
         newEvent.setManager(manager);
         newEvent.setMaxPeople(body.maxPeople());
+        newEvent.setDescription(body.description());
 
         return eventsDAO.save(newEvent);
     }
@@ -54,5 +55,22 @@ public class EventsService {
             throw new ItemNotFoundException(id);
         }
         return found.get();
+    }
+
+    public void getByIdAndDelete(UUID id){
+        Event found = this.getById(id);
+        eventsDAO.delete(found);
+    }
+
+    public Event getByIdAndChange(UUID id, NewEventDTO body){
+        Event found = this.getById(id);
+
+        found.setDescription(body.description());
+        found.setDate(body.date());
+        found.setLocation(body.location());
+        found.setName(body.name());
+        found.setMaxPeople(body.maxPeople());
+
+        return eventsDAO.save(found);
     }
 }

@@ -22,6 +22,7 @@ public class Event {
     private String name;
     private String location;
     private LocalDate date;
+    private String description;
 
     @ManyToMany(mappedBy = "eventList")
     private List<User> userList;

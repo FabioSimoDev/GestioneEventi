@@ -2,6 +2,7 @@ package simonelli.fabio.GestioneEventi.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
@@ -51,5 +52,25 @@ public class EventsController {
     @GetMapping("/{eventId}")
     public Event getById(@PathVariable UUID eventId){
         return eventsService.getById(eventId);
+    }
+
+    @DeleteMapping("/{eventId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void getByIdAndDelete(@PathVariable UUID eventId){
+        eventsService.getByIdAndDelete(eventId);
+    }
+
+    @PutMapping("/{eventId}")
+    @ResponseStatus(HttpStatus.OK)
+    public Event getByIdAndChange(@PathVariable UUID eventId,
+                                  @RequestBody @Validated NewEventDTO body,
+                                  BindingResult validation){
+        System.out.println(validation);
+        if (validation.hasErrors()) {
+            System.out.println(validation.getAllErrors());
+            throw new BadRequestException("Ci sono errori nel payload!"); 
+        } else {
+            return eventsService.getByIdAndChange(eventId, body);
+        }
     }
 }
