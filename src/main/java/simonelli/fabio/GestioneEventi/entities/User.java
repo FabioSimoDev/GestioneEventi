@@ -1,5 +1,7 @@
 package simonelli.fabio.GestioneEventi.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -8,6 +10,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
@@ -16,6 +19,7 @@ import java.util.UUID;
 @Setter
 @ToString
 @Entity
+@JsonIgnoreProperties({"password", "authorities", "accountNonExpired", "enabled", "accountNonLocked", "credentialsNonExpired", "username", "eventList", "eventiCreati"})
 public class User implements UserDetails {
     @Id
     @GeneratedValue
@@ -34,6 +38,9 @@ public class User implements UserDetails {
             inverseJoinColumns = @JoinColumn(name = "evento_id")
     )
     private List<Event> eventList;
+
+    @OneToMany(mappedBy = "manager")
+    private List<Event> eventiCreati = new ArrayList<>();
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

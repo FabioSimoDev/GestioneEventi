@@ -6,8 +6,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import simonelli.fabio.GestioneEventi.entities.Role;
 import simonelli.fabio.GestioneEventi.entities.User;
 import simonelli.fabio.GestioneEventi.exceptions.ItemNotFoundException;
+import simonelli.fabio.GestioneEventi.exceptions.RoleAlreadySetException;
+import simonelli.fabio.GestioneEventi.exceptions.RoleNotValidException;
 import simonelli.fabio.GestioneEventi.repositories.UsersDAO;
 
 import java.util.UUID;
@@ -44,5 +47,19 @@ public class UsersService {
 
     public User findByEmail(String email) throws ItemNotFoundException {
         return usersDAO.findByEmail(email).orElseThrow(() -> new ItemNotFoundException("Utente con email " + email + " non trovata!"));
+    }
+
+    public User changeUserRole(UUID id, String role){
+        User found = this.findById(id);
+        try{
+            Role targetRole = Role.valueOf(role);
+            if(found.getRole().equals(targetRole)){
+                throw new RoleAlreadySetException(role);
+            }
+            found.setRole(targetRole);
+            return usersDAO.save(found);
+        }catch(IllegalArgumentException ex){
+            throw new RoleNotValidException(role);
+        }
     }
 }

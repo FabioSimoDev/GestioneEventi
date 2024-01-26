@@ -5,6 +5,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import simonelli.fabio.GestioneEventi.entities.User;
+import simonelli.fabio.GestioneEventi.payloads.NewEventResponseDTO;
+import simonelli.fabio.GestioneEventi.payloads.NewUserResponseDTO;
 import simonelli.fabio.GestioneEventi.services.UsersService;
 
 import java.util.UUID;
@@ -41,5 +43,11 @@ public class UsersController {
     @GetMapping("/{userId}")
     public User getUserById(@PathVariable UUID userId) {
         return usersService.findById(userId);
+    }
+
+    @PutMapping("/role/{userId}")
+    public NewUserResponseDTO changeUserRole(@PathVariable UUID userId, @RequestParam(name = "role", required = true) String role){
+        User changedUser = usersService.changeUserRole(userId, role);
+        return new NewUserResponseDTO(changedUser.getId());
     }
 }

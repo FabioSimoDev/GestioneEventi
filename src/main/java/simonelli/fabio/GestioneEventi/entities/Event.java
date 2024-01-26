@@ -1,9 +1,7 @@
 package simonelli.fabio.GestioneEventi.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -16,6 +14,7 @@ import java.util.UUID;
 @Setter
 @ToString
 @Entity
+@JsonIgnoreProperties({"userList"})
 public class Event {
     @Id
     @GeneratedValue
@@ -26,4 +25,10 @@ public class Event {
 
     @ManyToMany(mappedBy = "eventList")
     private List<User> userList;
+
+    private int maxPeople;
+    private int numParticipants;
+
+    @ManyToOne
+    private User manager;
 }
